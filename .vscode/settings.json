@@ -1,0 +1,6 @@
+{
+    "jupyter.kernels.excludePythonEnvironments": [
+        "/bin/python",
+        "/usr/bin/python"
+    ]
+}
