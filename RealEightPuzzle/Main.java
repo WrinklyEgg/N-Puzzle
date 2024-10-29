@@ -17,14 +17,24 @@ public class Main {
 
         Traveller traveller = new Traveller(puzzle, endPuzzle);
         ArrayList<EightPuzzle> adjNodes= traveller.findAdjNodes(puzzle);
+        
         for(int i =0;i<adjNodes.size();i++)
         {
+            System.out.println("adjacent #"+(i+1));
             System.out.println(adjNodes.get(i).toString());
         }
-
+        
+        ArrayList<EightPuzzle> adjNodes2= traveller.findAdjNodes(adjNodes.get(0));
+        System.out.println("Start: ");
+        System.out.println(adjNodes.get(0).toString());
+        for(int i =0;i<adjNodes2.size();i++)
+        {
+            System.out.println("adjacent #"+(i+1));
+            System.out.println(adjNodes2.get(i).toString());
+        }
         System.out.println();
         //System.out.println(traveller.findAdjNodes().get(0).toString());
-        System.out.println(traveller.cost(puzzle));
+        //System.out.println(traveller.cost(puzzle));
 
         //System.out.println(traveller.travel(puzzle).toString());
     }

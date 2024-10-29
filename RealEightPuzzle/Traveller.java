@@ -2,6 +2,7 @@ package RealEightPuzzle;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashSet;
 public class Traveller {
     int xPos;
     int yPos;
@@ -11,26 +12,31 @@ public class Traveller {
     EightPuzzle end;
     String travelPath;
     EightPuzzle blank;
+    HashSet<EightPuzzle> visitedNodes;
     //ArrayList<Point>  positionsStart= new ArrayList<>();
     ArrayList<Point>  positionsEnd= new ArrayList<>();
     public Traveller(EightPuzzle start, EightPuzzle end)
     {
         this.start=start;
+       
         this.end=end;
         travelPath="";
         movesFromStart=0;
-       
+        visitedNodes = new HashSet<>();
+        visitedNodes.add(start);
         for(int i =0;i<start.length*start.length; i++)
         {
             positionsEnd.add(new Point(end.findBlankXPos(i),(end.findBlankYPos(i))));
         }
-        System.out.println(positionsEnd.toString());
+        //System.out.println(positionsEnd.toString());
         blank = new EightPuzzle(3);
     }
 
     
     public ArrayList<EightPuzzle> findAdjNodes(EightPuzzle puzzle)
     {
+        puzzle.findBlankZeroXPos();
+        puzzle.findBlankZeroYPos();
         xPos=puzzle.getXPos();
         yPos=puzzle.getYPos();
         board= puzzle.getBoard();
@@ -72,7 +78,11 @@ public class Traveller {
             adjPuzzle[yPos][xPos-1]=0;
             adjPuzzle[yPos][xPos]=temp;
             EightPuzzle newPuzzle = new EightPuzzle(adjPuzzle);
-            adjNodes.add(newPuzzle);
+            if(!visitedNodes.contains(newPuzzle))
+            {
+                adjNodes.add(newPuzzle);
+            }
+            
             //System.out.println("Board: \n" + Arrays.deepToString(board).replace("], ", "]\n")+"\n");
         }
         if(rightPossible)
@@ -89,7 +99,10 @@ public class Traveller {
             adjPuzzle[yPos][xPos+1]=0;
             adjPuzzle[yPos][xPos]=temp;
             EightPuzzle newPuzzle = new EightPuzzle(adjPuzzle);
-            adjNodes.add(newPuzzle);
+            if(!visitedNodes.contains(newPuzzle))
+            {
+                adjNodes.add(newPuzzle);
+            }
             //System.out.println("Board: \n" + Arrays.deepToString(board).replace("], ", "]\n")+"\n");
         }
         //System.out.println("Board: \n" + Arrays.deepToString(board).replace("], ", "]\n")+"\n");
@@ -107,7 +120,11 @@ public class Traveller {
             adjPuzzle[yPos-1][xPos]=0;
             adjPuzzle[yPos][xPos]=temp;
             EightPuzzle newPuzzle = new EightPuzzle(adjPuzzle);
-            adjNodes.add(newPuzzle);
+
+            if(!visitedNodes.contains(newPuzzle))
+            {
+                adjNodes.add(newPuzzle);
+            }
             //System.out.println("Board: \n" + Arrays.deepToString(board).replace("], ", "]\n")+"\n");
         }
         if(downPossible)
@@ -124,7 +141,10 @@ public class Traveller {
             adjPuzzle[yPos+1][xPos]=0;
             adjPuzzle[yPos][xPos]=temp;
             EightPuzzle newPuzzle = new EightPuzzle(adjPuzzle);
-            adjNodes.add(newPuzzle);
+            if(!visitedNodes.contains(newPuzzle))
+            {
+                adjNodes.add(newPuzzle);
+            }
             //System.out.println("Board: \n" + Arrays.deepToString(board).replace("], ", "]\n")+"\n");
         }
         return adjNodes;
@@ -149,11 +169,20 @@ public class Traveller {
 
         return totalDist;
     }
-
+     
     public EightPuzzle travel(EightPuzzle node)
     {
+        if(node==null)
+        {
+            System.out.println("couldn't find goal");
+            return blank;
+        }
+        visitedNodes.add(node);
         ArrayList<EightPuzzle> adjNodes = findAdjNodes(node);
-        
+        if(adjNodes.isEmpty())
+        {
+            return null;
+        }
         Point lowestCost= new Point(0,cost(adjNodes.get(0)));
         if(cost(node)==0)
         {
@@ -163,19 +192,39 @@ public class Traveller {
         else{ 
             for(int i =0;i<adjNodes.size();i++)
             {
+                if(visitedNodes.contains(adjNodes.get(i)))
+                {
+                    continue;
+                }
                 if(cost(adjNodes.get(i))==0)
                 {
-                    travel(adjNodes.get(i));
+                    System.out.println("Goal Found!");
+                    return adjNodes.get(i);
                 }
                 else if(cost(adjNodes.get(i))<lowestCost.getY())
                 {
                     lowestCost.setLocation(i, cost(adjNodes.get(i)));
+                    //System.out.println(lowestCost.getX()+" "+lowestCost.getY());
                 } 
             }
-            travel(adjNodes.get((int)lowestCost.getX()));
-        }
+            //System.out.println(adjNodes.get((int)(lowestCost.getX())));
+            if(lowestCost.getX()==0)
+            {
+                System.out.println("Couldn't find goal");
+                return null;
+            }
+            if(!visitedNodes.contains(adjNodes.get((int)(lowestCost.getX()))))
+            {
+                return travel(adjNodes.get((int)(lowestCost.getX())));
+            }
             
             return blank;
+        
         }
        
     }
+        
+
+
+        
+ }
