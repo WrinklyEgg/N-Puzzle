@@ -2,10 +2,7 @@ package RealEightPuzzle;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Collections;
-import java.awt.Point;
 
 public class EightPuzzle 
 {
@@ -14,10 +11,12 @@ public class EightPuzzle
 
     int length;
     int[][] board;
-   
+    int distFromStart; 
     
-    public EightPuzzle(int length)
+
+    public EightPuzzle(int length, int distFromStart)
     {
+        
         this.length=length;
         List <Integer> list = new ArrayList<>();
         for(int i =0;i<length*length;i++)
@@ -41,9 +40,11 @@ public class EightPuzzle
         findBlankZeroYPos();
         
     }
-    public EightPuzzle(int[][] Array)
+    
+    public EightPuzzle(int[][] Array, int distFromStart)
     {
-        length=3;
+        this.distFromStart=distFromStart;
+        length=Array.length;
         board = new int[length][length];
        
         for(int i =0;i<length;i++)
@@ -133,6 +134,11 @@ public class EightPuzzle
         return 0;
     }
 
+    public int getDistFromStart()
+    {
+        return distFromStart;
+    }
+    
     public String getXYPos()
     {
         return xPos+" "+yPos;
@@ -150,4 +156,17 @@ public class EightPuzzle
     {
         return board;
     }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        EightPuzzle other = (EightPuzzle) obj;
+        return Arrays.deepEquals(this.board, other.board);
+    }
+
+@Override
+public int hashCode() {
+    return Arrays.deepHashCode(this.board);
+}
+
 }
